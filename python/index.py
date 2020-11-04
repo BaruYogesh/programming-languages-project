@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 
 # Initialize Window
 
@@ -8,28 +9,36 @@ root.geometry("400x300")
 
 # Generate Widgets
 
-topFrame = tk.Frame(root, bg="blue")
-bottomFrame = tk.Frame(root, bg="blue")
+taskview = ttk.Treeview(root, selectmode='browse')
 
-btn1 = tk.Button(topFrame, text="1", height=5, width=15)
-btn2 = tk.Button(topFrame, text="2", height=5, width=15)
-btn3 = tk.Button(topFrame, text="3", height=5, width=15)
-btn4 = tk.Button(bottomFrame, text="4", height=5, width=15)
+# Set up the cols
 
-topFrame.pack(side=tk.TOP,fill=tk.X, expand=False, padx=3, pady=3)
-bottomFrame.pack(side=tk.TOP,fill=tk.X, expand=False, padx=3, pady=3)
+taskview['columns'] = ('Task','Due','Points')
+taskview['show'] = 'headings'
 
-btn1.pack(side=tk.LEFT, padx=3)
-btn2.pack(side=tk.LEFT, padx=3)
-btn3.pack(side=tk.LEFT, padx=3)
-btn4.pack(side=tk.LEFT, padx=3)
+taskview.column('Task', width=200)
+taskview.column('Due', width=50)
+taskview.column('Points', width=50)
 
-"""
-btn1.pack(side=tk.LEFT,fill=tk.BOTH, expand=True)
-btn2.pack(side=tk.LEFT,fill=tk.BOTH, expand=True)
-btn3.pack(side=tk.LEFT,fill=tk.BOTH, expand=True)
-"""
+taskview.heading('Task', text = 'Task')
+taskview.heading('Due', text = 'Due')
+taskview.heading('Points', text = 'Points')
+
+# Populate the cols
+
+taskview.insert(parent='', index='end', values=('Discrete Structures Lecture','1','5'))
 
 # Run program
 
+taskview.pack(side = 'left')
+
 root.mainloop()
+
+'''
+# To-do
+
+- Add colors to the items based on due date
+- work on populating from the http requests and not dummys
+- add new task
+
+'''
