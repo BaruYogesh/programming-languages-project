@@ -4,19 +4,12 @@ const express = require('express');
 const app = express();
 const server = http.createServer(app);
 
+const cron = require('node-cron');
+
+const types = require('./datatypes');
+
 app.use(express.json());
 /*
-
-[{'user1':
-  [
-    {
-      title: 'task name',
-      due: 5,
-      points: 2
-    }...
-  ]
-}...]
-
 data = [
   {name: "baru",
    tasks: [
@@ -25,19 +18,19 @@ data = [
       points: 2}
    ]}
 ]
-
 */
 
 data = []
 
 app.post('/get', async (req, res) => {
   
-  let ans = data.find(e => e == req.query.name);
-  console.log(req.query)
+  let ans = data.find(e => e.name == req.query.name);
+  console.log(ans);
+  //console.log(req.query)
   if (ans === undefined){
     
     const name = req.query.name;
-    newUser = {name: name, tasks: []}
+    newUser = new types.User(name);
     data.push(newUser)
     res.send(newUser)
   } else {
@@ -52,12 +45,20 @@ app.post('/addtask', async (req, res) => {
     res.send(null);
   } else {
     const index = data.findIndex(e => e.name === req.query.name);
-    newTask = {
-      title: req.query.title,
-      due: req.query.due,
-      points: req.query.points
+
+    taskExists = data[index].tasks.findIndex(e => e.title === req.query.title);
+
+    if (taskExists > -1){
+      data[index].tasks[taskExists] = new types.Task(req.query.title, req.query.due, req.query.points);
+    } else {
+      newTask = new types.Task(req.query.title, req.query.due, req.query.points);
+      data[index].tasks.push(newTask);
+      
     }
-    data[index].tasks.push(newTask);
+
+    data[index].tasks.sort(function(a, b) {
+      return a.due - b.due;
+    })
 
     res.send(data.find(e => e.name == req.query.name));
   }
@@ -66,18 +67,43 @@ app.post('/addtask', async (req, res) => {
 
 app.post('/removetask', async (req, res) => {
   let user = data.find(e => e.name == req.query.name);
+  let points = null;
   if (user === undefined){
     res.send(null);
   } else {
     const userIndex = data.findIndex(e => e.name === req.query.name);
+    
     if (userIndex > -1){
       const taskIndex = data[userIndex].tasks.findIndex(e => e.title === req.query.title);
+      points = data[userIndex].tasks[taskIndex].points;
       data[userIndex].tasks.splice(taskIndex, 1);
     }
 
-    res.send(data.find(e => e.name == req.query.name));
+    res.send(points);
   }
   console.log(data.find(e => e.name == req.query.name).tasks);
+});
+
+app.get('/midnight', async(req, res) => {
+  decrementAllDueDates();
+  res.send(data)
+})
+
+function decrementAllDueDates(){
+
+  for(let user of data){
+    for(let task of user.tasks){
+      task.due = (task.due-1).toString();
+    }
+  }
+}
+
+cron.schedule('* 0 * * *', () => {
+  decrementAllDueDates();
+})
+
+cron.schedule('40 16 * * *', () => {
+  decrementAllDueDates();
 })
 
 const PORT = process.env.PORT || 3001;
