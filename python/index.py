@@ -26,19 +26,38 @@ taskview.heading('Points', text = 'Points')
 
 # Populate the cols
 
-taskview.insert(parent='', index='end', values=('Discrete Structures Lecture','1','5'))
+taskview.insert(parent='', index='end', values=('Discrete Structures Lecture','1','5'), tags=('1'))
 
-# Run program
+'''
+Task: Final Column population.
+
+Procedure: Method 
+- asks for the user's name 
+- gets all of the tasks
+- retrives all of the values
+- transform the due date if it is due 'Today' or 'Tomorrow' if the value is 0 or 1
+- (?) decide a background color based off of point values
+- injects items with format: taskview.insert(parent='', index='end', values=('Task Description','Due','# of Points'))
+
+'''
+
+# Set Tags
+
+taskview.tag_configure('1', foreground='red', background='red')
+
+# Place objects
 
 taskview.pack(side = 'left')
+
+# Run program
 
 root.mainloop()
 
 '''
 # To-do
 
-- Add colors to the items based on due date
+- (?) Add colors to the items based on due date if possible
 - work on populating from the http requests and not dummys
-- add new task
+- Add / Remove task buttons
 
 '''
