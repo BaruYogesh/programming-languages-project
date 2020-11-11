@@ -102,11 +102,6 @@ cron.schedule('* 0 * * *', () => {
   decrementAllDueDates();
 })
 
-cron.schedule('40 16 * * *', () => {
-  decrementAllDueDates();
-})
-
 const PORT = process.env.PORT || 3001;
 
 server.listen(PORT, () => console.log('server running on port', PORT));
-
