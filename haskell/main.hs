@@ -1,7 +1,10 @@
 import System.IO
+import Data.String
   
 main = do  
-    handle <- openFile "gf.txt" ReadMode  
+    handle <- openFile "../javascript/data.txt" ReadMode  
     contents <- hGetContents handle  
-    putStr contents  
+
+    leaderboardLines <- lines (contents)
+    putStr leaderboardLines
     hClose handle  
