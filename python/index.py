@@ -25,6 +25,7 @@ def dueDate(due):
     else:
         return (due,'safe')
 
+# inserts a new task dictionary into the 
 def insertTask(task):
     urgency = dueDate(task['points'])
     taskView.insert(parent='', index='end', values=(task['title'], urgency[0], task['due']), tags=(urgency[1]))
@@ -42,7 +43,7 @@ def updateTasks():
         insertTask(task)
 
 # adds a task to the TreeView and the working list of tasks
-def addTask(taskList, title, due, points):
+def newTask(taskList, title, due, points):
 
     task = {
         'title' : title,
@@ -51,8 +52,7 @@ def addTask(taskList, title, due, points):
     }
 
     insertTask(task)
-    #userData['tasks'] += task # uncomment after testing
-    taskList += task
+    taskList += task # userData['tasks']
 
 def fixed_map(option):
     # Fix for setting text colour for Tkinter 8.6.9
