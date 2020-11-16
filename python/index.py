@@ -25,10 +25,10 @@ def dueDate(due):
     else:
         return (due,'safe')
 
-# inserts a new task dictionary into the 
+# inserts a new task dictionary into the TreeView
 def insertTask(task):
-    urgency = dueDate(task['points'])
-    taskView.insert(parent='', index='end', values=(task['title'], urgency[0], task['due']), tags=(urgency[1]))
+    urgency = dueDate(task['due'])
+    taskView.insert(parent='', index='end', values=(task['title'], urgency[0], task['points']), tags=(urgency[1]))
 
 
 # removes all task items from the TreeView
@@ -43,16 +43,61 @@ def updateTasks():
         insertTask(task)
 
 # adds a task to the TreeView and the working list of tasks
-def newTask(taskList, title, due, points):
+def createTask(taskList, title, due, points):
 
     task = {
+        'name' : userName,
         'title' : title,
         'due' : due,
         'points' : points
     }
 
-    insertTask(task)
     taskList += task # userData['tasks']
+
+    return task
+
+
+def addTask(task):
+    requests.post('http://localhost:3001/addtask', params=task)
+
+def removeTask(task):
+    requests.post('http://localhost:3001/removetask', params=task)
+
+def newTask():
+
+    title = simpledialog.askstring(title='New Task for '+userName, prompt='Enter title of new task:')
+    due = str(simpledialog.askinteger(title='New Task for '+userName, prompt='Enter days due from now for new task:'))
+    points = str(simpledialog.askinteger(title='New Task for '+userName, prompt='Enter point value for new task:'))
+
+    task = createTask(userTasks, title, due, points)
+
+    insertTask(task)
+
+    addTask(task) # http post
+
+def deleteTask():
+
+    focus = taskView.focus()
+
+    if focus == '':
+        messagebox.showerror('Error', 'No Task Selected')
+        return
+
+    item = taskView.item(focus)
+    itemValues = item['values']
+
+    task = {
+        'name' : userName,
+        'title' : itemValues[0]
+    }
+
+    if (messagebox.askyesno('Remove Task for '+task['name'], 'Do you wish to delete task: '+task['title']) == True):
+        removeTask(task) # http post
+
+        taskView.delete(focus)
+
+        messagebox.showinfo('Success', 'Task '+task['title']+' has been removed successfully')
+
 
 def fixed_map(option):
     # Fix for setting text colour for Tkinter 8.6.9
@@ -113,6 +158,9 @@ style.map('Treeview', foreground=fixed_map('foreground'), background=fixed_map('
 
 taskView = ttk.Treeview(root, selectmode='browse')
 
+addButton = tk.Button(root, text='Add New Task', command=newTask)
+removeButton = tk.Button(root, text='Remove Selected Task', command=deleteTask)
+
 # Set up the cols
 
 taskView['columns'] = ('Task','Due','Points')
@@ -131,15 +179,8 @@ taskView.heading('Points', text = 'Points')
 updateTasks()
 
 # sample task
-addTask(userTasks,'Discrete Structures Lecture','1','5')
 
-'''
-Task: Final Column population.
-
-- transform the due date if it is due 'Today' or 'Tomorrow' if the value is 0 or 1
-- (?) decide a background color based off of point values
-
-'''
+insertTask(createTask(userTasks,'This task persists for testing','1','5'))
 
 # Set Tags
 
@@ -149,7 +190,10 @@ taskView.tag_configure('safe', foreground = 'black', background=Color.GREEN.valu
 
 # Place objects
 
-taskView.pack(side = 'left')
+taskView.pack(side = 'top')
+removeButton.pack(side = 'bottom')
+addButton.pack(side = 'bottom')
+
 
 # Run program
 
