@@ -2,6 +2,7 @@ class User {
   constructor(name) {
     this.name = name;
     this.tasks = [];
+    this.points = 0;
   }
 }
 

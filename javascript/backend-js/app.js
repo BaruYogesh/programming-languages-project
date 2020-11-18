@@ -1,5 +1,6 @@
 const http = require('http');
 const express = require('express');
+const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
@@ -22,6 +23,8 @@ data = [
 
 data = []
 
+score = []
+
 app.post('/get', async (req, res) => {
   
   let ans = data.find(e => e.name == req.query.name);
@@ -32,6 +35,7 @@ app.post('/get', async (req, res) => {
     const name = req.query.name;
     newUser = new types.User(name);
     data.push(newUser)
+    score.push(newUser)
     res.send(newUser)
   } else {
     res.send(ans)
@@ -78,6 +82,20 @@ app.post('/removetask', async (req, res) => {
       points = data[userIndex].tasks[taskIndex].points;
       data[userIndex].tasks.splice(taskIndex, 1);
     }
+    let scoreIndex = score.findIndex(e => e.name === req.query.name);
+    score[scoreIndex].points += parseInt(points);
+
+    score.sort((a, b) => b.points - a.points);
+    console.log(score);
+    let scoreString = "";
+
+    for (s of score){
+      scoreString += `${s.name} ${s.points} \n`
+    }
+    fs.writeFile('../data.txt', scoreString, function (err) {
+      if (err) throw err;
+      console.log('Saved!');
+    })
 
     res.send(points);
   }
@@ -102,11 +120,6 @@ cron.schedule('* 0 * * *', () => {
   decrementAllDueDates();
 })
 
-cron.schedule('40 16 * * *', () => {
-  decrementAllDueDates();
-})
-
 const PORT = process.env.PORT || 3001;
 
 server.listen(PORT, () => console.log('server running on port', PORT));
-
