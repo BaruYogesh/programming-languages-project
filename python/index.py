@@ -6,13 +6,6 @@ from tkinter import messagebox
 import requests
 from enum import Enum
 
-from pyswip import Prolog
-
-# Prolog Connection
-
-prolog = Prolog()
-prolog.consult('prolog.pl')
-
 # Color Enum
 
 class Color(Enum):
@@ -118,15 +111,6 @@ def fixed_map(option):
     return [elm for elm in style.map('Treeview', query_opt=option) if
       elm[:2] != ('!disabled', '!selected')]
 
-def getQuote():
-
-    points = requests.post('http://localhost:3001/get?name='+userName.lower()).json()['points']
-
-    pred = 'enterYourPoints({num}).'.format(num=points)
-    quote = prolog.query(pred)
-
-    root.title(quote)
-
 # Main Script
 
 userName = 'baru'
@@ -164,8 +148,8 @@ userTasks = [
 
 root = tk.Tk()
 
-getQuote() # Sets the title to an inspirational quote
-root.geometry("400x300")
+root.title('To-do')
+root.geometry('400x300')
 
 
 # Generate Widgets
