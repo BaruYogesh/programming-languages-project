@@ -6,6 +6,13 @@ from tkinter import messagebox
 import requests
 from enum import Enum
 
+from pyswip import Prolog
+
+# Prolog Connection
+
+prolog = Prolog()
+prolog.consult('prolog.pl')
+
 # Color Enum
 
 class Color(Enum):
@@ -56,7 +63,6 @@ def createTask(taskList, title, due, points):
 
     return task
 
-
 def addTask(task):
     requests.post('http://localhost:3001/addtask', params=task)
 
@@ -98,6 +104,7 @@ def deleteTask():
 
         messagebox.showinfo('Success', 'Task '+task['title']+' has been removed successfully')
 
+    getQuote()
 
 def fixed_map(option):
     # Fix for setting text colour for Tkinter 8.6.9
@@ -110,6 +117,15 @@ def fixed_map(option):
     # should be future-safe.
     return [elm for elm in style.map('Treeview', query_opt=option) if
       elm[:2] != ('!disabled', '!selected')]
+
+def getQuote():
+
+    points = requests.post('http://localhost:3001/get?name='+userName.lower()).json()['points']
+
+    pred = 'enterYourPoints({num}).'.format(num=points)
+    quote = prolog.query(pred)
+
+    root.title(quote)
 
 # Main Script
 
@@ -148,7 +164,7 @@ userTasks = [
 
 root = tk.Tk()
 
-root.title("To-do")
+getQuote() # Sets the title to an inspirational quote
 root.geometry("400x300")
 
 
@@ -199,13 +215,3 @@ addButton.pack(side = 'bottom')
 # Run program
 
 root.mainloop()
-
-
-'''
-# To-do
-
-- work on populating from the http requests and not dummys
-- Add / Remove task buttons
-- Add scrollbar
-
-'''
