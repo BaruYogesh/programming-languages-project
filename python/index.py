@@ -6,6 +6,13 @@ from tkinter import messagebox
 import requests
 from enum import Enum
 
+from pyswip import Prolog
+
+# Prolog Connection
+
+prolog = Prolog()
+prolog.consult('prolog.pl')
+
 # Color Enum
 
 class Color(Enum):
@@ -56,7 +63,6 @@ def createTask(taskList, title, due, points):
 
     return task
 
-
 def addTask(task):
     requests.post('http://localhost:3001/addtask', params=task)
 
@@ -98,6 +104,7 @@ def deleteTask():
 
         messagebox.showinfo('Success', 'Task '+task['title']+' has been removed successfully')
 
+    getQuote()
 
 def fixed_map(option):
     # Fix for setting text colour for Tkinter 8.6.9
@@ -111,19 +118,29 @@ def fixed_map(option):
     return [elm for elm in style.map('Treeview', query_opt=option) if
       elm[:2] != ('!disabled', '!selected')]
 
+def getQuote():
+
+    points = requests.post('http://localhost:3001/get?name='+userName.lower()).json()['points']
+
+    pred = 'enterYourPoints({num}).'.format(num=points)
+    quote = prolog.query(pred)
+
+    root.title(quote)
+
 # Main Script
 
-userName = 'none'
+userName = 'baru'
 
 while True:
-    userName = simpledialog.askstring(title='Sign in', prompt='Enter the name of the user') # Get the user string
+    #userName = simpledialog.askstring(title='Sign in', prompt='Enter the name of the user') # Get the user string
 
-    request = requests.get('http://localhost:3001/get?name='+userName.lower())
+    request = requests.post('http://localhost:3001/get?name='+userName.lower())
 
     if (request.status_code == 200):
         break
     else:
-        messagebox.showerror(title='Error', message="Error code: {errorCode} for user {userName}".format(request.status_code,userName))
+        #messagebox.showerror(title='Error', message="Error code: {errorCode} for user {userName}".format(request.status_code,userName))
+        print(request.status_code)
 
 userData = request.json() # userData['tasks'], userData['name']
 userTasks = userData['tasks']
@@ -147,7 +164,7 @@ userTasks = [
 
 root = tk.Tk()
 
-root.title("To-do")
+getQuote() # Sets the title to an inspirational quote
 root.geometry("400x300")
 
 
@@ -198,13 +215,3 @@ addButton.pack(side = 'bottom')
 # Run program
 
 root.mainloop()
-
-
-'''
-# To-do
-
-- work on populating from the http requests and not dummys
-- Add / Remove task buttons
-- Add scrollbar
-
-'''
