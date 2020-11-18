@@ -85,17 +85,14 @@ app.post('/removetask', async (req, res) => {
     let scoreIndex = score.findIndex(e => e.name === req.query.name);
     score[scoreIndex].points += parseInt(points);
 
-    score.sort((a, b) => b.points - a.points);
-    console.log(score);
+    // score.sort((a, b) => b.points - a.points);
+    // console.log(score);
     let scoreString = "";
 
     for (s of score){
       scoreString += `${s.name} ${s.points} \n`
     }
-    fs.writeFile('../data.txt', scoreString, function (err) {
-      if (err) throw err;
-      console.log('Saved!');
-    })
+    fs.writeFileSync('../data.txt', scoreString)
 
     res.send(points);
   }

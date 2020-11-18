@@ -113,17 +113,18 @@ def fixed_map(option):
 
 # Main Script
 
-userName = 'none'
+userName = 'baru'
 
 while True:
-    userName = simpledialog.askstring(title='Sign in', prompt='Enter the name of the user') # Get the user string
+    #userName = simpledialog.askstring(title='Sign in', prompt='Enter the name of the user') # Get the user string
 
-    request = requests.get('http://localhost:3001/get?name='+userName.lower())
+    request = requests.post('http://localhost:3001/get?name='+userName.lower())
 
     if (request.status_code == 200):
         break
     else:
-        messagebox.showerror(title='Error', message="Error code: {errorCode} for user {userName}".format(request.status_code,userName))
+        #messagebox.showerror(title='Error', message="Error code: {errorCode} for user {userName}".format(request.status_code,userName))
+        print(request.status_code)
 
 userData = request.json() # userData['tasks'], userData['name']
 userTasks = userData['tasks']

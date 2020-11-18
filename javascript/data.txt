@@ -1,4 +1,2 @@
-jackson 3 
-baru 5 
-roman 1
-ethan 6
+baru 20 
+ethan 25 
