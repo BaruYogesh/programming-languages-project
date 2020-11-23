@@ -56,12 +56,15 @@ def createTask(taskList, title, due, points):
 
     return task
 
+# adds a task to the server
 def addTask(task):
     requests.post('http://localhost:3001/addtask', params=task)
 
+# removes a task from the server
 def removeTask(task):
     requests.post('http://localhost:3001/removetask', params=task)
 
+# action button for add task, generates a new task from user input, adds it to the TreeView and server
 def newTask():
 
     title = simpledialog.askstring(title='New Task for '+userName, prompt='Enter title of new task:')
@@ -74,6 +77,7 @@ def newTask():
 
     addTask(task) # http post
 
+# action button for delete task, removes the selected task from the TreeView and server
 def deleteTask():
 
     focus = taskView.focus()
@@ -97,10 +101,9 @@ def deleteTask():
 
         messagebox.showinfo('Success', 'Task '+task['title']+' has been removed successfully')
 
-    getQuote()
-
+# fix for setting text colour for Tkinter 8.6.9
 def fixed_map(option):
-    # Fix for setting text colour for Tkinter 8.6.9
+
     # From: https://core.tcl.tk/tk/info/509cafafae
     #
     # Returns the style map for 'option' with any styles starting with
@@ -113,10 +116,11 @@ def fixed_map(option):
 
 # Main Script
 
-userName = 'baru'
+userName = 'dafault'
 
 while True:
     #userName = simpledialog.askstring(title='Sign in', prompt='Enter the name of the user') # Get the user string
+    userName = input('Sign in with name of the user\n>>> ')
 
     request = requests.post('http://localhost:3001/get?name='+userName.lower())
 
@@ -124,25 +128,11 @@ while True:
         break
     else:
         #messagebox.showerror(title='Error', message="Error code: {errorCode} for user {userName}".format(request.status_code,userName))
+        print('Error code: {code} for user {name}'.format(code=request.status_code, name=userName))
         print(request.status_code)
 
 userData = request.json() # userData['tasks'], userData['name']
 userTasks = userData['tasks']
-
-''' # SAMPLE TASKS STRUCTURE FOR TESTING
-userTasks = [
-        {
-            "title": "task1",
-            "due": "1",
-            "points": "1"
-        },
-        {
-            "title": "task2",
-            "due": "2",
-            "points": "2"
-        },
-    ]
-'''
 
 # Initialize Window
 
