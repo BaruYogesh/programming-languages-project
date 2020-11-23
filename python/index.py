@@ -97,7 +97,6 @@ def deleteTask():
 
         messagebox.showinfo('Success', 'Task '+task['title']+' has been removed successfully')
 
-    getQuote()
 
 def fixed_map(option):
     # Fix for setting text colour for Tkinter 8.6.9

@@ -11,4 +11,14 @@ num(9) :- write('Do What You Can With All You Have, Wherever You Are.').
 
 enterYourPoints(Num):- 
     NumMod is Num mod 10,
-    num(NumMod).
+    num(NumMod),
+    Num < 10 -> write('Pick up the pace, you can do this. ');
+    Num < 20 -> write('Good job. You are on the right track. ');
+    Num < 30 -> write('Keep it up. ');
+    Num < 40 -> write('It is almost Friday. You got this. '); 
+    Num < 50 -> write('Now you are getting there. '); 
+    Num < 60 -> write('You are doing great. ');
+    Num < 70 -> write('Awesome job. ');
+    Num < 80 -> write('You are the best! ');
+    Num < 90 -> write('Is this a new record? ');
+    write('Wow! Exceptional job this week! ').
