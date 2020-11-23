@@ -116,10 +116,9 @@ def fixed_map(option):
 
 # Main Script
 
-userName = 'dafault'
+userName = 'default'
 
 while True:
-    #userName = simpledialog.askstring(title='Sign in', prompt='Enter the name of the user') # Get the user string
     userName = input('Sign in with name of the user\n>>> ')
 
     request = requests.post('http://localhost:3001/get?name='+userName.lower())
@@ -127,7 +126,6 @@ while True:
     if (request.status_code == 200):
         break
     else:
-        #messagebox.showerror(title='Error', message="Error code: {errorCode} for user {userName}".format(request.status_code,userName))
         print('Error code: {code} for user {name}'.format(code=request.status_code, name=userName))
         print(request.status_code)
 
@@ -168,10 +166,6 @@ taskView.heading('Points', text = 'Points')
 # Populate the cols
 
 updateTasks()
-
-# sample task
-
-insertTask(createTask(userTasks,'This task persists for testing','1','5'))
 
 # Set Tags
 
