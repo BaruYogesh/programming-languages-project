@@ -1,1 +1,5 @@
-baru 3 
+jackson 25 
+ethan 15 
+han 10 
+pinto 20 
+baru 15 
